@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Card from '../../../components/ui/Card';
 import Modal from '../../../components/ui/Modal';
+import Button from '../../../components/ui/Button';
 
 export default function ItemCard({ item }) {
   const [openImage, setOpenImage] = useState(null);
@@ -10,21 +11,24 @@ export default function ItemCard({ item }) {
     <Card className="p-4 space-y-3">
       {thumbnail && (
         <button onClick={() => setOpenImage(thumbnail)} className="block w-full">
-          <img src={thumbnail} alt={item.title} className="w-full h-40 object-cover rounded-md" />
+          <img src={thumbnail} alt={item.title} className="w-full h-40 object-cover rounded-[var(--radius-card)]" />
         </button>
       )}
 
       <div>
-        <h3 className="font-semibold text-gray-900">{item.title}</h3>
-        {item.date && <p className="text-sm text-gray-500">{item.date}</p>}
+        <h3 className="font-heading font-semibold text-[var(--color-text)]">{item.title}</h3>
+        {item.date && <p className="text-sm text-[var(--color-text-muted)]">{item.date}</p>}
       </div>
 
-      {item.description && <p className="text-sm text-gray-600">{item.description}</p>}
+      {item.description && <p className="text-sm text-[var(--color-text-muted)]">{item.description}</p>}
 
       {item.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {item.tags.map((tag) => (
-            <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+            <span
+              key={tag}
+              className="text-xs bg-[var(--color-secondary)]/15 text-[var(--color-secondary)] px-2 py-1 rounded-full font-medium"
+            >
               {tag}
             </span>
           ))}
@@ -32,17 +36,18 @@ export default function ItemCard({ item }) {
       )}
 
       {item.links?.length > 0 && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {item.links.map((link) => (
-            <a
+            <Button
               key={link.url}
+              as="a"
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-[var(--color-primary)] hover:underline"
+              className="!px-3 !py-1.5 text-sm"
             >
               {link.title || link.url}
-            </a>
+            </Button>
           ))}
         </div>
       )}
