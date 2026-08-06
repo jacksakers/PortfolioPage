@@ -75,7 +75,7 @@ export default function ItemForm({ sections, initialItem, onSubmit, onCancel }) 
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] items-start">
       <form onSubmit={handleSubmit} className="space-y-4 bg-white border border-gray-200 rounded-md p-4">
         <h3 className="font-medium text-gray-900">{initialItem ? 'Edit Post' : 'Add Post'}</h3>
 

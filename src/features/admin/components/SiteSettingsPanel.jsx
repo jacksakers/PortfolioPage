@@ -81,7 +81,7 @@ export default function SiteSettingsPanel() {
   if (loading) return <p className="text-gray-500">Loading settings...</p>;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] items-start">
       <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl">
         <div>
           <h2 className="text-xl font-semibold text-gray-900">Site Settings</h2>

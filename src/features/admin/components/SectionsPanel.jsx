@@ -82,7 +82,7 @@ export default function SectionsPanel() {
   if (loading) return <p className="text-gray-500">Loading sections...</p>;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] items-start">
       <div className="space-y-8 max-w-2xl">
         <h2 className="text-xl font-semibold text-gray-900">Sections</h2>
 
