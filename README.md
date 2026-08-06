@@ -16,14 +16,30 @@ A data-driven, customizable portfolio builder built with React, Vite, Tailwind C
   - `SectionsPanel` — add/edit/delete navigation sections.
   - `ItemsPanel` / `ItemForm` — add/edit/delete posts, with image upload and link lists.
   - `DataHubPanel` — export the full site as JSON, or import a JSON file to replace all data.
-- **Phase 5 — Public Portfolio:** not started (`HomePage.jsx` is a placeholder).
-- **Phase 6 — Polish & Deployment:** not started.
+- **Phase 5 — Public Portfolio:** done.
+  - `src/components/layout/PublicLayout.jsx`, `Navbar.jsx` (dynamic nav from Firestore sections, mobile hamburger menu), `Footer.jsx`.
+  - `src/features/portfolio/components/Hero.jsx` — profile image, name, tagline, bio from `siteSettings`.
+  - `src/features/portfolio/SectionView.jsx` — generic `/portfolio/:slug` page, renders a grid or timeline layout depending on the section's `type`.
+  - `src/features/portfolio/components/ItemCard.jsx` — post card with tags/links and a click-to-expand image lightbox (`src/components/ui/Modal.jsx`).
+- **Phase 6 — Polish & Deployment:** done.
+  - Responsive layouts throughout (collapsible mobile nav, responsive grids/sidebar).
+  - `firestore.rules` / `storage.rules` — public read, authenticated-only write, image type/size limits on Storage uploads.
+  - `firebase.json` / `.firebaserc` — Firebase Hosting config (SPA rewrites) and project alias.
 
 ## Setup
 
 1. Copy `.env` with your Firebase project config (`VITE_FIREBASE_*` variables).
 2. `npm install`
 3. `npm run dev`
+
+## Deployment
+
+```
+npm run build
+firebase deploy
+```
+
+This deploys Hosting (the `dist` build output), plus the Firestore and Storage security rules. Requires the [Firebase CLI](https://firebase.google.com/docs/cli) installed and logged in (`firebase login`), with the project alias in `.firebaserc` matching your Firebase project.
 
 ## React + Vite template notes
 
