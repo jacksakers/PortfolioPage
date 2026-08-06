@@ -42,6 +42,17 @@ export const LAYOUT_WIDTH_OPTIONS = [
   { value: 'wide', label: 'Wide', className: 'max-w-6xl' },
 ];
 
+export const CARD_STYLE_OPTIONS = [
+  { value: 'shadow', label: 'Soft shadow' },
+  { value: 'bordered', label: 'Bordered' },
+  { value: 'flat', label: 'Flat' },
+];
+
+export const BACKGROUND_STYLE_OPTIONS = [
+  { value: 'solid', label: 'Solid color' },
+  { value: 'gradient', label: 'Soft gradient' },
+];
+
 export const DEFAULT_THEME = {
   primaryColor: '#3b82f6',
   secondaryColor: '#10b981',
@@ -56,6 +67,9 @@ export const DEFAULT_THEME = {
   heroLayout: 'centered',
   navbarStyle: 'light',
   layoutWidth: 'normal',
+  cardStyle: 'shadow',
+  backgroundStyle: 'solid',
+  navbarSticky: true,
 };
 
 // Merges saved theme data with defaults, migrating the old single "fontFamily" field.
@@ -74,6 +88,22 @@ export function getRadiusOption(value) {
 
 export function getLayoutWidthClass(value) {
   return LAYOUT_WIDTH_OPTIONS.find((option) => option.value === value)?.className || 'max-w-5xl';
+}
+
+export function getCardStyleClass(value) {
+  if (value === 'flat') return 'shadow-none border border-black/5';
+  if (value === 'bordered') return 'shadow-none border-2 border-[var(--color-primary)]/30';
+  return 'shadow-sm border border-black/5';
+}
+
+// Returns an inline style object for the page background (solid color or a soft gradient).
+export function getBackgroundStyle(theme) {
+  if (theme.backgroundStyle === 'gradient') {
+    return {
+      backgroundImage: `linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 10%, var(--color-background)) 0%, var(--color-background) 320px)`,
+    };
+  }
+  return { backgroundColor: 'var(--color-background)' };
 }
 
 function loadGoogleFont(googleParam) {

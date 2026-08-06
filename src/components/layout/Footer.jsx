@@ -4,9 +4,9 @@ import { getLayoutWidthClass } from '../../utils/theme';
 export default function Footer() {
   const { siteSettings, theme } = useTheme();
   const ownerName = siteSettings?.ownerName || 'Portfolio';
-  const { contactEmail, linkedinUrl, resumeUrl } = siteSettings || {};
+  const { contactEmail, resumeUrl, socialLinks } = siteSettings || {};
   const widthClass = getLayoutWidthClass(theme.layoutWidth);
-  const hasLinks = contactEmail || linkedinUrl || resumeUrl;
+  const hasLinks = contactEmail || resumeUrl || socialLinks?.length > 0;
 
   return (
     <footer className="border-t border-black/5 mt-16">
@@ -18,15 +18,24 @@ export default function Footer() {
                 {contactEmail}
               </a>
             )}
-            {linkedinUrl && (
-              <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)]">
-                LinkedIn
-              </a>
-            )}
             {resumeUrl && (
               <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)]">
                 Resume
               </a>
+            )}
+            {socialLinks?.map(
+              (link) =>
+                link.url && (
+                  <a
+                    key={link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[var(--color-primary)]"
+                  >
+                    {link.label || link.url}
+                  </a>
+                ),
             )}
           </div>
         )}

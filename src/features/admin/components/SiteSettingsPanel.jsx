@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { useDocument } from '../../../hooks/useDocument';
-import ThemePreview from './ThemePreview';
+import LivePreviewFrame from './LivePreviewFrame';
+import ImageUploadField from '../../../components/ui/ImageUploadField';
 import {
   DEFAULT_THEME,
   FONT_OPTIONS,
@@ -11,6 +12,8 @@ import {
   HERO_LAYOUT_OPTIONS,
   NAVBAR_STYLE_OPTIONS,
   LAYOUT_WIDTH_OPTIONS,
+  CARD_STYLE_OPTIONS,
+  BACKGROUND_STYLE_OPTIONS,
   resolveTheme,
 } from '../../../utils/theme';
 
@@ -20,9 +23,10 @@ const DEFAULT_SETTINGS = {
   tagline: '',
   bio: '',
   profileImageUrl: '',
+  heroBackgroundImageUrl: '',
   resumeUrl: '',
   contactEmail: '',
-  linkedinUrl: '',
+  socialLinks: [],
   theme: DEFAULT_THEME,
 };
 
@@ -49,6 +53,16 @@ export default function SiteSettingsPanel() {
   const updateField = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
   const updateTheme = (field, value) =>
     setForm((prev) => ({ ...prev, theme: { ...prev.theme, [field]: value } }));
+
+  const updateSocialLink = (index, field, value) => {
+    const socialLinks = [...form.socialLinks];
+    socialLinks[index] = { ...socialLinks[index], [field]: value };
+    setForm((prev) => ({ ...prev, socialLinks }));
+  };
+  const addSocialLink = () =>
+    setForm((prev) => ({ ...prev, socialLinks: [...prev.socialLinks, { label: '', url: '' }] }));
+  const removeSocialLink = (index) =>
+    setForm((prev) => ({ ...prev, socialLinks: prev.socialLinks.filter((_, i) => i !== index) }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,13 +115,12 @@ export default function SiteSettingsPanel() {
             <textarea rows={4} className={inputClass} value={form.bio} onChange={(e) => updateField('bio', e.target.value)} />
           </Field>
 
-          <Field label="Profile Image URL" help="A square photo works best.">
-            <input
-              className={inputClass}
-              value={form.profileImageUrl}
-              onChange={(e) => updateField('profileImageUrl', e.target.value)}
-            />
-          </Field>
+          <ImageUploadField
+            label="Profile Photo"
+            value={form.profileImageUrl}
+            onChange={(url) => updateField('profileImageUrl', url)}
+            storagePath="site"
+          />
         </Section>
 
         <Section title="Contact & Links" description="Optional links shown in the hero and site footer.">
@@ -120,21 +133,41 @@ export default function SiteSettingsPanel() {
                 onChange={(e) => updateField('contactEmail', e.target.value)}
               />
             </Field>
-            <Field label="LinkedIn URL" help="Shown in the footer.">
+            <Field label="Resume URL" help="Adds a 'View Resume' button to your hero section.">
               <input
                 className={inputClass}
-                value={form.linkedinUrl}
-                onChange={(e) => updateField('linkedinUrl', e.target.value)}
+                value={form.resumeUrl}
+                onChange={(e) => updateField('resumeUrl', e.target.value)}
               />
             </Field>
           </div>
-          <Field label="Resume URL" help="Adds a 'View Resume' button to your hero section.">
-            <input
-              className={inputClass}
-              value={form.resumeUrl}
-              onChange={(e) => updateField('resumeUrl', e.target.value)}
-            />
-          </Field>
+
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-700">Social & Other Links</p>
+            <p className="text-xs text-gray-400">e.g. LinkedIn, GitHub, personal website — shown in the footer.</p>
+            {form.socialLinks.map((link, i) => (
+              <div key={i} className="flex gap-2">
+                <input
+                  placeholder="Label (e.g. LinkedIn)"
+                  className={inputClass}
+                  value={link.label}
+                  onChange={(e) => updateSocialLink(i, 'label', e.target.value)}
+                />
+                <input
+                  placeholder="URL"
+                  className={inputClass}
+                  value={link.url}
+                  onChange={(e) => updateSocialLink(i, 'url', e.target.value)}
+                />
+                <button type="button" onClick={() => removeSocialLink(i)} className="text-red-600 text-sm">
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button type="button" onClick={addSocialLink} className="text-sm text-[var(--color-primary)] font-medium">
+              + Add Link
+            </button>
+          </div>
         </Section>
 
         <Section title="Colors" description="Pick colors for the key surfaces and accents of your site.">
@@ -276,7 +309,52 @@ export default function SiteSettingsPanel() {
                 ))}
               </select>
             </Field>
+            <Field label="Card Style" help="How post cards are framed.">
+              <select
+                className={selectClass}
+                value={form.theme.cardStyle}
+                onChange={(e) => updateTheme('cardStyle', e.target.value)}
+              >
+                {CARD_STYLE_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Page Background" help="Solid color or a soft tint fading from the top.">
+              <select
+                className={selectClass}
+                value={form.theme.backgroundStyle}
+                onChange={(e) => updateTheme('backgroundStyle', e.target.value)}
+              >
+                {BACKGROUND_STYLE_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
+
+          {form.theme.heroLayout === 'banner' && (
+            <ImageUploadField
+              label="Hero Background Photo"
+              value={form.heroBackgroundImageUrl}
+              onChange={(url) => updateField('heroBackgroundImageUrl', url)}
+              storagePath="site"
+              aspect="wide"
+            />
+          )}
+
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.theme.navbarSticky}
+              onChange={(e) => updateTheme('navbarSticky', e.target.checked)}
+            />
+            Keep navigation bar fixed at the top while scrolling
+          </label>
         </Section>
 
         <button
@@ -288,7 +366,7 @@ export default function SiteSettingsPanel() {
         </button>
       </form>
 
-      <ThemePreview form={form} />
+      <LivePreviewFrame theme={form.theme} siteSettings={form} />
     </div>
   );
 }

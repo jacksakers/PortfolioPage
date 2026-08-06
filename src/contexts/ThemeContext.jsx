@@ -4,6 +4,9 @@ import { db } from '../firebaseConfig';
 import { resolveTheme, getRadiusOption, ensureFontLoaded } from '../utils/theme';
 
 const ThemeContext = createContext(undefined);
+// Lets admin screens preview unsaved edits: components deep in the tree that call
+// useTheme() will transparently see the override's theme/siteSettings instead.
+const ThemeOverrideContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const [siteSettings, setSiteSettings] = useState(null);
@@ -49,8 +52,24 @@ export function ThemeProvider({ children }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
+  const override = useContext(ThemeOverrideContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
+  if (override) {
+    return {
+      ...context,
+      theme: override.theme ?? context.theme,
+      siteSettings: override.siteSettings ?? context.siteSettings,
+      loading: false,
+    };
+  }
   return context;
+}
+
+// Wrap a subtree with this to make every useTheme() call within it see unsaved
+// form data instead of the live Firestore-backed values. Used for admin previews.
+export function ThemePreviewProvider({ theme, siteSettings, children }) {
+  const value = { theme, siteSettings };
+  return <ThemeOverrideContext.Provider value={value}>{children}</ThemeOverrideContext.Provider>;
 }

@@ -30,7 +30,7 @@ export default function ItemsPanel() {
   if (loading) return <p className="text-gray-500">Loading posts...</p>;
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900">Posts</h2>
         {!showForm && (
@@ -58,7 +58,7 @@ export default function ItemsPanel() {
         />
       )}
 
-      <ul className="divide-y divide-gray-200 border border-gray-200 rounded-md">
+      <ul className="divide-y divide-gray-200 border border-gray-200 rounded-md max-w-2xl">
         {items.map((item) => (
           <li key={item.id} className="flex items-center justify-between px-4 py-3">
             <div>

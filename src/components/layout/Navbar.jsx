@@ -28,7 +28,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-40 ${
+      className={`${theme.navbarSticky ? 'sticky top-0' : ''} z-40 ${
         isBold
           ? 'bg-[var(--color-primary)] border-b-4 border-[var(--color-secondary)]'
           : 'bg-[var(--color-surface)] border-b border-black/5'

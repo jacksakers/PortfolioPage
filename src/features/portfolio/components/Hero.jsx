@@ -14,7 +14,7 @@ export default function Hero() {
     );
   }
 
-  const { ownerName, tagline, bio, profileImageUrl, resumeUrl } = siteSettings;
+  const { ownerName, tagline, bio, profileImageUrl, resumeUrl, heroBackgroundImageUrl } = siteSettings;
   const layout = theme.heroLayout;
 
   const resumeButton = resumeUrl && (
@@ -24,8 +24,19 @@ export default function Hero() {
   );
 
   if (layout === 'banner') {
+    const bannerStyle = heroBackgroundImageUrl
+      ? {
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${heroBackgroundImageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }
+      : { backgroundColor: 'var(--color-primary)' };
+
     return (
-      <section className="-mx-4 sm:mx-0 rounded-[var(--radius-card)] px-6 py-16 sm:py-20 text-center bg-[var(--color-primary)] text-white flex flex-col items-center gap-4">
+      <section
+        className="-mx-4 sm:mx-0 rounded-[var(--radius-card)] px-6 py-16 sm:py-20 text-center text-white flex flex-col items-center gap-4"
+        style={bannerStyle}
+      >
         {profileImageUrl && (
           <img
             src={profileImageUrl}
