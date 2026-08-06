@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Theme CSS variables are set dynamically by ThemeContext based on siteSettings.theme */
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #10b981;
+}
+
+body {
+  margin: 0;
+}

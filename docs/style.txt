@@ -1,0 +1,93 @@
+React & Firebase Coding Style Guidelines
+
+To ensure this project remains a robust, generic template that is easy to maintain, follow these coding standards focusing on modularity and separation of concerns.
+
+1. File & Folder Structure (Feature-Based)
+
+Organize files by feature rather than type. This keeps related code together and makes the codebase scalable.
+
+src/
+├── assets/            # Static files, global CSS
+├── components/        # Generic, reusable UI (Buttons, Modals, Cards)
+│   ├── ui/
+│   │   ├── Button.jsx
+│   │   └── Card.jsx
+│   └── layout/
+│       ├── Navbar.jsx
+│       └── Footer.jsx
+├── features/          # Feature-specific logic and components
+│   ├── admin/         # Dashboard, Data import/export, Theme editor
+│   ├── auth/          # Login forms, Auth hooks
+│   └── portfolio/     # Public-facing views, Item grids, Timelines
+├── hooks/             # Global custom hooks (useFirestore, useAuth)
+├── contexts/          # React Contexts (ThemeContext, AuthContext)
+├── utils/             # Helpers (date formatting, JSON parsing)
+├── App.jsx            # Main router setup
+└── main.jsx           # Entry point
+
+
+2. Separation of Concerns (The Golden Rule)
+
+Never put Firebase logic directly inside your UI components. UI components should only receive data as props and emit events.
+
+Bad: Calling getDocs(collection(db, 'items')) inside PortfolioGrid.jsx.
+
+Good: Creating a custom hook usePortfolioItems(sectionId) that handles Firebase logic, and using that hook inside a container component, which then passes the raw data to a "dumb" UI component like PortfolioGrid.
+
+Example: Custom Firebase Hook
+
+// src/hooks/useFirestoreData.js
+import { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+
+export const useSectionItems = (sectionId) => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(collection(db, "items"), where("sectionId", "==", sectionId));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setItems(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [sectionId]);
+
+  return { items, loading };
+};
+
+
+3. React Best Practices
+
+Small, Modular Components: If a component exceeds 150-200 lines, it's likely doing too much. Break it down (e.g., extract the form into its own component, extract the list item into its own component).
+
+Props Spreading: Avoid spreading props heavily ({...props}). Be explicit about what a component accepts for better readability and debugging.
+
+Early Returns: Use early returns for loading states and error handling to keep the main render tree flat.
+
+if (loading) return <LoadingSpinner />;
+if (error) return <ErrorMessage message={error.message} />;
+return <MainContent />;
+
+
+4. Styling & Theming (Tailwind CSS)
+
+Data-Driven Themes: Inject dynamic styles via React inline styles for theme variables, and use Tailwind for layout.
+
+// Injecting the admin-defined primary color
+<div style={{ '--color-primary': theme.primaryColor }}>
+  <button className="bg-[var(--color-primary)] text-white p-2 rounded">
+    Click Me
+  </button>
+</div>
+
+
+Utility Consolidation: If you repeat a long string of Tailwind classes, extract it into a reusable React component (like Card or Button) rather than using @apply in CSS, staying true to React's component-driven nature.
+
+5. JSON Import/Export Safety
+
+Validation: When writing the importData function, validate the JSON schema before writing to Firestore to prevent corrupting the database.
+
+Batch Writes: Use Firebase Firestore Batch Writes when importing JSON so that if one document fails, the whole import fails, preventing partial data updates.

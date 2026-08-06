@@ -1,0 +1,79 @@
+Implementation Plan & Roadmap
+
+This phased approach will take you from project initialization to a fully deployed application.
+
+Phase 1: Foundation & Setup
+
+Initialize Vite Project: Run npm create vite@latest portfolio-app -- --template react.
+
+Install Dependencies: * react-router-dom (routing)
+
+firebase (backend)
+
+lucide-react (beautiful, customizable icons)
+
+tailwindcss, postcss, autoprefixer (styling).
+
+Configure Tailwind: Set up tailwind.config.js.
+
+Firebase Project: Create a project in the Firebase Console. Enable Auth (Email/Password), Firestore, and Storage. Grab the config object.
+
+Firebase Init: Create src/firebaseConfig.js and initialize the app.
+
+Phase 2: Authentication & Contexts
+
+Auth Provider: Create an AuthContext.jsx that listens to Firebase's onAuthStateChanged.
+
+Protected Routes: Create a <ProtectedRoute> wrapper component that redirects unauthenticated users to /login.
+
+Login Page: Build a simple login screen for the admin.
+
+Theme Provider: Create a ThemeContext.jsx that fetches the siteSettings document from Firestore and provides the theme colors to the app.
+
+Phase 3: Core Data & Hooks (The Brains)
+
+CRUD Hooks: Write generic hooks in src/hooks/:
+
+useCollection(collectionName)
+
+useDocument(collectionName, docId)
+
+useStorage() (for image uploads)
+
+JSON Import/Export Logic: * Write a utility function exportSiteData() that fetches all sections and items, assembling them into the JSON schema.
+
+Write importSiteData(jsonData) utilizing Firestore writeBatch to wipe old data and write the new structure.
+
+Phase 4: Admin Dashboard (The Engine)
+
+Dashboard Layout: Create a sidebar navigation for the admin panel (Settings, Sections, Posts).
+
+Site Settings Form: Form to update name, bio, and use HTML5 color pickers (<input type="color">) for theme colors.
+
+Section Management: UI to create/edit/delete navigation tabs (e.g., adding a "Hobbies" tab).
+
+Content Management (CRUD): * List view of all items.
+
+Form to add/edit an item (Title, Date, Description, Image Upload to Firebase Storage, Link arrays).
+
+Data Hub UI: Add the "Export JSON" button and a Textarea/File Upload for the "Import JSON" feature.
+
+Phase 5: Public Portfolio (The Face)
+
+Public Layout: Setup the Navbar and Footer that read dynamically from the sections context.
+
+Hero Component: Display the dynamic bio and profile picture on the home page.
+
+Dynamic Rendering: Create a generic SectionView.jsx. When a user navigates to /portfolio/research, fetch the section data.
+
+Item Cards: Build responsive cards for posts. If an item has an image (like a poster), display a thumbnail.
+
+Image Modal: Implement a click-to-expand feature for high-res viewing of research posters.
+
+Phase 6: Polish & Deployment
+
+Mobile Optimization: Audit all views using Chrome DevTools mobile view. Ensure the Navbar collapses to a hamburger menu.
+
+Security Rules: Set Firestore rules. (e.g., allow read: if true; allow write: if request.auth != null;).
+
+Hosting: Deploy the app using Firebase Hosting (firebase init hosting, then npm run build and firebase deploy) or Vercel/Netlify.

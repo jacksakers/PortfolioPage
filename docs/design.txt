@@ -1,0 +1,111 @@
+Design Document: Generic Portfolio Builder (MedFolio)
+
+1. Product Overview
+
+A highly customizable, data-driven portfolio builder tailored (but not strictly limited) to medical students applying for residencies. The platform allows users to manage their personal brand, showcase research posters, log volunteer hours, and share hobbies.
+
+Key Objectives
+
+Data-Driven: The entire site's content and theme should be representable as a single JSON object.
+
+Customizable UI: Users can change themes (colors, typography) and layout styles for individual posts/sections.
+
+AI Integration Ready: Full JSON import/export capabilities so users can prompt an LLM (like Gemini or ChatGPT) with their CV to generate the site data.
+
+Responsive: Mobile-first design for reviewing on phones, fully functional on desktop.
+
+Full CRUD: An authenticated admin dashboard to create, read, update, and delete entries.
+
+2. System Architecture
+
+Frontend: React 18+ (using Vite for fast bundling).
+
+Styling: Tailwind CSS (perfect for dynamic theming and responsive design).
+
+Backend / Database: Firebase Firestore (NoSQL document database).
+
+Authentication: Firebase Auth (Email/Password or Google Sign-in for the site owner).
+
+File Storage: Firebase Storage (for uploading research posters, profile pictures, and gallery images).
+
+Routing: React Router v6.
+
+3. Core Features & App Structure
+
+Public Facing (The Portfolio)
+
+Dynamic Navigation: Generated based on the existing sections/pages in the database.
+
+Hero Section: Profile picture, name, specialty (e.g., "Pediatrics Residency Applicant"), and a brief bio.
+
+Dynamic Sections (Tabs/Pages):
+
+Research & Academics: Posters (image previews + PDF links), publications, grad school projects.
+
+Community & Volunteer: Timelines or cards showing service hours and impact.
+
+Personal / Hobbies: Photo galleries and descriptions of life outside medicine.
+
+Admin Dashboard (Authenticated)
+
+Theme Editor: Color pickers (Primary, Secondary, Background), font selectors.
+
+Section Manager: Add/Remove/Rename tabs.
+
+Content Editor: Rich text or Markdown editor for posts, image uploaders.
+
+Data Hub: "Export to JSON" and "Import from JSON" buttons.
+
+4. Data Model & JSON Schema
+
+To achieve the "fully data-driven" requirement, the Firebase structure and the Import/Export JSON will mirror each other.
+
+{
+  "siteSettings": {
+    "title": "Dr. Jane Doe - Portfolio",
+    "ownerName": "Jane Doe",
+    "tagline": "Future Pediatrician | Researcher | Advocate",
+    "bio": "Passionate about early childhood development...",
+    "profileImageUrl": "https://...",
+    "theme": {
+      "primaryColor": "#3b82f6",
+      "secondaryColor": "#10b981",
+      "fontFamily": "Inter, sans-serif"
+    }
+  },
+  "sections": [
+    {
+      "id": "sec-1",
+      "title": "Research Posters",
+      "slug": "research",
+      "type": "grid", 
+      "order": 1
+    },
+    {
+      "id": "sec-2",
+      "title": "Community Service",
+      "slug": "volunteer",
+      "type": "timeline",
+      "order": 2
+    }
+  ],
+  "items": [
+    {
+      "id": "item-1",
+      "sectionId": "sec-1",
+      "title": "Impact of Nutrition on Early Development",
+      "date": "2023-05-12",
+      "description": "Presented at AAP 2023. This study highlights...",
+      "images": ["https://.../poster1.png"],
+      "links": [{"title": "Read Paper", "url": "https://..."}],
+      "tags": ["Pediatrics", "Nutrition"]
+    }
+  ]
+}
+
+
+5. UI/UX Considerations
+
+Medical Professionalism + Personality: Since it's for pediatrics, soft, approachable colors (pastels, blues, soft greens) are great defaults, but the admin theme editor should allow full customization.
+
+Image Modals: Research posters are text-heavy. Implementing a lightbox/modal feature so users can click a poster and read it in high resolution is essential.
