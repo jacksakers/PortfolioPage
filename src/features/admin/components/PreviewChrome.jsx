@@ -34,7 +34,7 @@ export default function PreviewChrome({ children, label = 'Live Preview', style,
   );
 
   return (
-    <div className="flex items-stretch w-full lg:w-auto lg:inline-flex">
+    <div className="flex items-stretch w-full lg:w-auto lg:inline-flex lg:self-stretch">
       <div
         role="separator"
         aria-orientation="vertical"
@@ -46,7 +46,7 @@ export default function PreviewChrome({ children, label = 'Live Preview', style,
       </div>
 
       <div
-        className="w-full lg:w-[var(--preview-width)] lg:shrink-0 min-w-0"
+        className="w-full lg:w-[var(--preview-width)] lg:shrink-0 lg:h-full min-w-0"
         style={{ '--preview-width': `${width}px` }}
       >
         <p className="lg:hidden mb-2 text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md px-3 py-2">

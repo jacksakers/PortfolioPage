@@ -14,13 +14,33 @@ export default function Hero() {
     );
   }
 
-  const { ownerName, tagline, bio, profileImageUrl, resumeUrl, heroBackgroundImageUrl } = siteSettings;
+  const { ownerName, tagline, bio, profileImageUrl, resumeUrl, heroBackgroundImageUrl, socialLinks } = siteSettings;
   const layout = theme.heroLayout;
 
   const resumeButton = resumeUrl && (
     <Button as="a" href={resumeUrl} target="_blank" rel="noopener noreferrer">
       View Resume
     </Button>
+  );
+
+  const socialButtons = socialLinks?.length > 0 && (
+    <div className="flex flex-wrap justify-center gap-2">
+      {socialLinks
+        .filter((link) => link.url)
+        .map((link) => (
+          <Button
+            key={link.url}
+            as="a"
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outline"
+            className="!px-3 !py-1.5 text-sm"
+          >
+            {link.label || link.url}
+          </Button>
+        ))}
+    </div>
   );
 
   if (layout === 'banner') {
@@ -48,6 +68,7 @@ export default function Hero() {
         {tagline && <p className="text-lg font-medium text-white/90">{tagline}</p>}
         {bio && <p className="max-w-xl text-white/80">{bio}</p>}
         {resumeButton && <div className="pt-2">{resumeButton}</div>}
+        {socialButtons}
       </section>
     );
   }
@@ -67,6 +88,7 @@ export default function Hero() {
           {tagline && <p className="text-lg text-[var(--color-primary)] font-medium">{tagline}</p>}
           {bio && <p className="max-w-xl text-[var(--color-text-muted)]">{bio}</p>}
           {resumeButton && <div className="pt-1">{resumeButton}</div>}
+          {socialButtons && <div className="md:justify-start flex">{socialButtons}</div>}
         </div>
       </section>
     );
@@ -85,6 +107,7 @@ export default function Hero() {
       {tagline && <p className="text-lg text-[var(--color-primary)] font-medium">{tagline}</p>}
       {bio && <p className="max-w-xl text-[var(--color-text-muted)]">{bio}</p>}
       {resumeButton}
+      {socialButtons}
     </section>
   );
 }

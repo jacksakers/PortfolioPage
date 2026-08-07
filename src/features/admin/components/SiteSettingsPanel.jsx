@@ -4,6 +4,7 @@ import { db } from '../../../firebaseConfig';
 import { useDocument } from '../../../hooks/useDocument';
 import LivePreviewFrame from './LivePreviewFrame';
 import ImageUploadField from '../../../components/ui/ImageUploadField';
+import MultiImageUploadField from '../../../components/ui/MultiImageUploadField';
 import {
   DEFAULT_THEME,
   FONT_OPTIONS,
@@ -27,6 +28,7 @@ const DEFAULT_SETTINGS = {
   resumeUrl: '',
   contactEmail: '',
   socialLinks: [],
+  galleryImages: [],
   theme: DEFAULT_THEME,
 };
 
@@ -168,6 +170,14 @@ export default function SiteSettingsPanel() {
               + Add Link
             </button>
           </div>
+        </Section>
+
+        <Section title="Homepage Gallery" description="Extra photos shown in a gallery on your homepage (hobbies, life outside work, etc).">
+          <MultiImageUploadField
+            value={form.galleryImages}
+            onChange={(galleryImages) => updateField('galleryImages', galleryImages)}
+            storagePath="site"
+          />
         </Section>
 
         <Section title="Colors" description="Pick colors for the key surfaces and accents of your site.">

@@ -6,7 +6,12 @@ import SectionItemsLayout from './components/SectionItemsLayout';
 
 export default function SectionView() {
   const { slug } = useParams();
+  // Key remounts the whole subtree per slug so hook state from the previous
+  // section (matched sections, items) can never leak into the new one.
+  return <SectionViewContent key={slug} slug={slug} />;
+}
 
+function SectionViewContent({ slug }) {
   const sectionConstraints = useMemo(() => [where('slug', '==', slug)], [slug]);
   const { data: matchingSections, loading: sectionLoading } = useCollection('sections', sectionConstraints);
   const section = matchingSections[0];

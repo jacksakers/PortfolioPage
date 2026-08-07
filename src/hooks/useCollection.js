@@ -9,20 +9,30 @@ export function useCollection(collectionName, queryConstraints = []) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Reset immediately so a stale result from the previous query/collection is
+    // never shown while the new subscription is still connecting.
+    let active = true;
+    setData([]);
     setLoading(true);
+    setError(null);
     const q = query(collection(db, collectionName), ...queryConstraints);
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
+        if (!active) return;
         setData(snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })));
         setLoading(false);
       },
       (err) => {
+        if (!active) return;
         setError(err);
         setLoading(false);
       },
     );
-    return unsubscribe;
+    return () => {
+      active = false;
+      unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionName, ...queryConstraints]);
 

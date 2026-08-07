@@ -10,7 +10,7 @@ const SAMPLE_ITEM = {
   id: 'preview-sample',
   title: 'Sample Research Poster',
   date: '2026-01-01',
-  description: 'This is how your posts will look with the current styling.',
+  summary: 'This is how your posts will look with the current styling.',
   tags: ['Sample Tag'],
   links: [{ title: 'Example Link', url: '#' }],
   images: [],
