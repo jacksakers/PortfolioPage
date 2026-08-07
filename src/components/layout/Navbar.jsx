@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { useCollection } from '../../hooks/useCollection';
 import { useTheme } from '../../contexts/ThemeContext';
 import { getLayoutWidthClass } from '../../utils/theme';
@@ -48,6 +48,26 @@ export default function Navbar() {
               {section.title}
             </NavLink>
           ))}
+          <NavLink to="/timeline" className={linkClass}>
+            Timeline
+          </NavLink>
+          <NavLink
+            to="/search"
+            aria-label="Search"
+            className={({ isActive }) =>
+              `p-2 rounded-[var(--radius-button)] ${
+                isBold
+                  ? isActive
+                    ? 'bg-white/20 text-white'
+                    : 'text-white/80 hover:text-white'
+                  : isActive
+                    ? 'text-[var(--color-primary)]'
+                    : 'text-[var(--color-text-muted)] hover:text-[var(--color-primary)]'
+              }`
+            }
+          >
+            <Search size={18} />
+          </NavLink>
         </nav>
 
         <button
@@ -74,6 +94,12 @@ export default function Navbar() {
               {section.title}
             </NavLink>
           ))}
+          <NavLink to="/timeline" className={linkClass} onClick={() => setOpen(false)}>
+            Timeline
+          </NavLink>
+          <NavLink to="/search" className={linkClass} onClick={() => setOpen(false)}>
+            Search
+          </NavLink>
         </nav>
       )}
     </header>

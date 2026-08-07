@@ -4,9 +4,11 @@ import { db } from '../../../firebaseConfig';
 import { useCollection } from '../../../hooks/useCollection';
 import SectionItemsLayout from '../../portfolio/components/SectionItemsLayout';
 import PreviewChrome from './PreviewChrome';
+import RichTextEditor from '../../../components/ui/RichTextEditor';
+import { renderMarkdown } from '../../../utils/markdown';
 
-const SECTION_TYPES = ['grid', 'timeline', 'gallery'];
-const EMPTY_FORM = { title: '', slug: '', type: 'grid', order: 0 };
+const SECTION_TYPES = ['grid', 'timeline', 'gallery', 'page'];
+const EMPTY_FORM = { title: '', slug: '', type: 'grid', order: 0, content: '' };
 const inputClass =
   'w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]';
 
@@ -55,6 +57,7 @@ export default function SectionsPanel() {
       slug: section.slug ?? '',
       type: section.type ?? 'grid',
       order: section.order ?? 0,
+      content: section.content ?? '',
     });
   };
 
@@ -139,6 +142,17 @@ export default function SectionsPanel() {
               onChange={(e) => setForm({ ...form, order: e.target.value })}
             />
           </div>
+          {form.type === 'page' && (
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-1">Page Content</p>
+              <RichTextEditor
+                value={form.content}
+                onChange={(content) => setForm({ ...form, content })}
+                placeholder="Write this page's content here (e.g. an About page)..."
+                rows={8}
+              />
+            </div>
+          )}
           <div className="flex gap-2">
             <button type="submit" className="bg-[var(--color-primary)] text-white px-4 py-2 rounded-md font-medium">
               {editingId ? 'Save Changes' : 'Add Section'}
@@ -157,7 +171,14 @@ export default function SectionsPanel() {
           <h1 className="font-heading text-xl font-semibold text-[var(--color-text)]">
             {form.title || 'Section Title'}
           </h1>
-          <SectionItemsLayout type={form.type} items={previewItems} />
+          {form.type === 'page' ? (
+            <div
+              className="prose-post text-[var(--color-text)]"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(form.content) || '<p class="text-gray-400">Nothing to preview yet.</p>' }}
+            />
+          ) : (
+            <SectionItemsLayout type={form.type} items={previewItems} />
+          )}
         </div>
       </PreviewChrome>
     </div>

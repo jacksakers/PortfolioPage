@@ -1,13 +1,12 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Card from '../../../components/ui/Card';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Button';
-import { renderMarkdown } from '../../../utils/markdown';
 
 export default function ItemCard({ item }) {
   const [galleryIndex, setGalleryIndex] = useState(null);
-  const [showFullPost, setShowFullPost] = useState(false);
   const images = item.images ?? [];
   const thumbnail = images[0];
   const summary = item.summary ?? item.description ?? '';
@@ -43,12 +42,12 @@ export default function ItemCard({ item }) {
       {summary && <p className="text-sm text-[var(--color-text-muted)]">{summary}</p>}
 
       {hasFullContent && (
-        <button
-          onClick={() => setShowFullPost(true)}
+        <Link
+          to={`/post/${item.id}`}
           className="text-sm font-medium text-[var(--color-primary)] hover:underline"
         >
           Read more
-        </button>
+        </Link>
       )}
 
       {item.tags?.length > 0 && (
@@ -108,30 +107,6 @@ export default function ItemCard({ item }) {
             )}
           </div>
         )}
-      </Modal>
-
-      <Modal open={showFullPost} onClose={() => setShowFullPost(false)}>
-        <div className="bg-[var(--color-surface)] rounded-[var(--radius-card)] max-w-2xl w-[90vw] max-h-[85vh] overflow-y-auto p-6">
-          <h2 className="font-heading text-2xl font-semibold text-[var(--color-text)]">{item.title}</h2>
-          {item.date && <p className="text-sm text-[var(--color-text-muted)] mt-1">{item.date}</p>}
-          {images.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto py-4">
-              {images.map((url, i) => (
-                <img
-                  key={url}
-                  src={url}
-                  alt=""
-                  onClick={() => {
-                    setShowFullPost(false);
-                    setGalleryIndex(i);
-                  }}
-                  className="h-24 w-24 object-cover rounded-md cursor-pointer flex-shrink-0"
-                />
-              ))}
-            </div>
-          )}
-          <div className="prose-post text-[var(--color-text)]" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} />
-        </div>
       </Modal>
     </Card>
   );

@@ -20,6 +20,7 @@ function sanitizeUrl(url) {
 
 function renderInline(text) {
   let out = escapeHtml(text);
+  out = out.replace(/!\[([^\]]*)\]\((\S+?)\)/g, (_, alt, url) => `<img src="${sanitizeUrl(url)}" alt="${alt}" />`);
   out = out.replace(/\[([^\]]+)\]\((\S+?)\)/g, (_, label, url) => `<a href="${sanitizeUrl(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`);
   out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   out = out.replace(/(?<!\*)\*(?!\*)(.+?)\*(?!\*)/g, '<em>$1</em>');

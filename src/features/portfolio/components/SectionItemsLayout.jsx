@@ -2,7 +2,7 @@ import ItemCard from './ItemCard';
 
 // Shared item-grid/timeline/gallery rendering used by both the public SectionView
 // page and the admin Sections live preview, so they always stay in sync.
-export default function SectionItemsLayout({ type, items }) {
+export default function SectionItemsLayout({ type, items, sectionSlug }) {
   if (items.length === 0) {
     return <p className="text-[var(--color-text-muted)]">Nothing here yet.</p>;
   }
@@ -17,7 +17,7 @@ export default function SectionItemsLayout({ type, items }) {
   return (
     <div className={layoutClass}>
       {items.map((item) => (
-        <ItemCard key={item.id} item={item} />
+        <ItemCard key={item.id} item={item} sectionSlug={sectionSlug} />
       ))}
     </div>
   );

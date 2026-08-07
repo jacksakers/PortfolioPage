@@ -8,6 +8,7 @@ import {
   ListOrdered,
   Quote,
   Link as LinkIcon,
+  Image as ImageIcon,
   Eye,
   Pencil,
 } from 'lucide-react';
@@ -26,9 +27,13 @@ const TOOLBAR_BUTTONS = [
 
 // A lightweight markdown editor: a toolbar inserts markdown syntax around the
 // current selection, with a toggleable live preview rendered via renderMarkdown.
-export default function RichTextEditor({ value, onChange, placeholder, rows = 10 }) {
+// `onImageUpload(file)` is optional; if provided it enables an "insert image" button
+// that uploads the file and inserts a markdown image reference at the cursor.
+export default function RichTextEditor({ value, onChange, onImageUpload, placeholder, rows = 10 }) {
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   const applyFormat = (button) => {
     const textarea = textareaRef.current;
@@ -59,6 +64,32 @@ export default function RichTextEditor({ value, onChange, placeholder, rows = 10
     });
   };
 
+  const insertAtCursor = (text) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const { selectionStart, selectionEnd } = textarea;
+    const nextValue = value.slice(0, selectionStart) + text + value.slice(selectionEnd);
+    onChange(nextValue);
+    const cursor = selectionStart + text.length;
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(cursor, cursor);
+    });
+  };
+
+  const handleImageSelected = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !onImageUpload) return;
+    setImageUploading(true);
+    try {
+      const url = await onImageUpload(file);
+      insertAtCursor(`\n![${file.name}](${url})\n`);
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
   return (
     <div className="border border-gray-300 rounded-md overflow-hidden">
       <div className="flex items-center gap-1 bg-gray-50 border-b border-gray-300 px-2 py-1.5">
@@ -74,6 +105,21 @@ export default function RichTextEditor({ value, onChange, placeholder, rows = 10
             <Icon size={16} />
           </button>
         ))}
+        {onImageUpload && (
+          <>
+            <button
+              type="button"
+              title="Insert image"
+              aria-label="Insert image"
+              disabled={imageUploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="p-1.5 rounded hover:bg-gray-200 text-gray-600 disabled:opacity-50"
+            >
+              <ImageIcon size={16} />
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelected} />
+          </>
+        )}
         <div className="flex-1" />
         <button
           type="button"
